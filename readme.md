@@ -11,7 +11,7 @@ It's based on the algorithms described at http://www.redblobgames.com/grids/hexa
 #### Importing
 
 ```go
-import "github.com/jonas-p/go-shp"
+import "github.com/pmcxs/hexgrid"
 ```
 
 ### Examples
