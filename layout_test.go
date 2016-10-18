@@ -3,7 +3,6 @@ package hexgrid
 import (
 	"testing"
 	"fmt"
-	"math"
 )
 
 //              50  50  50
@@ -37,7 +36,7 @@ func TestHexToPixel(t *testing.T) {
 
 	pixel := HexToPixel(layout{size:size, origin:origin,orientation:orientationFlat},hex)
 
-	fmt.Println(math.R(pixel)
+	fmt.Println(pixel)
 
 }
 
