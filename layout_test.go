@@ -1,8 +1,8 @@
 package hexgrid
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 //              50  50  50
@@ -26,17 +26,35 @@ import (
 //                    *********
 //  Width: 	200 	2 * size
 //  Height:	86.6	sqrt(3)/2 * width
-func TestHexToPixel(t *testing.T) {
 
-	hex := NewHex(1,0)
+
+var hexToPixelValues = []struct {
+	hexA     hex
+	expected string
+}{
+	{NewHex(1, 0), "150.0;86.6"},
+	{NewHex(2, -1), "300.0;0.0"},
+}
+
+
+
+func TestHexToPixel(t *testing.T) {
 
 	origin := point {0,0}
 
 	size := point {100, 100}
 
-	pixel := HexToPixel(layout{size:size, origin:origin,orientation:orientationFlat},hex)
+	for _,tt := range hexToPixelValues {
 
-	fmt.Println(pixel)
+		pixel := HexToPixel(layout{size:size, origin:origin,orientation:orientationFlat},tt.hexA)
+
+		actual := fmt.Sprintf("%.1f;%.1f", pixel.x, pixel.y )
+
+		if(actual != tt.expected) {
+			t.Error("Expected:",tt.expected,"got:", actual)
+		}
+	}
+
 
 }
 
