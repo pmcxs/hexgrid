@@ -182,6 +182,26 @@ func HexRange(center hex, radius int) []hex {
 
 }
 
+
+// Returns the set of hexagons that form a rectangle with the specified width and height
+func HexRectangle(width,height int) []hex {
+
+	results := make([]hex, 0)
+
+	for q:=0; q < width; q++ {
+		qOffset := int(math.Floor(float64(q) / 2.))
+
+		for r := -qOffset; r < height - qOffset; r++ {
+
+			results = append(results, NewHex(q,r))
+		}
+	}
+
+	return results
+}
+
+
+
 func HexHasLineOfSight(center hex, target hex, blocking []hex) bool {
 
 	contains := func(s []hex, e hex) bool {

@@ -70,7 +70,6 @@ func TestHexScale(t *testing.T) {
 }
 
 
-
 //           _ _
 //         /     \
 //    _ _ /(0,-2) \ _ _
@@ -239,6 +238,15 @@ func TestHexRange(t *testing.T) {
 			t.Error("Expected:",tt.expectedNumberOfHexagons,"got:", len(actual))
 		}
 	}
+}
+
+
+func TestHexRectangle(t *testing.T) {
+
+	t.Skip()
+	fmt.Print(HexRectangle(3,2))
+
+
 }
 
 //    _ _           _ _           _ _
