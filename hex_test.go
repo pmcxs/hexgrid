@@ -198,8 +198,112 @@ func TestHexLineDraw(t *testing.T) {
 }
 
 
-// Benchmarks
+//                 _____
+//                /     \
+//          _____/ -1,-2 \_____
+//         /     \       /     \
+//   _____/ -2,-1 \_____/  0,-2 \_____
+//  /     \       /     \       /     \
+// / -3,-1 \_____/ -1,-2 \_____/  1,-3 \
+// \       /     \       /     \       /
+//  \_____/ -2,-2 \_____/  0,-3 \_____/
+//  /     \       /     \       /     \
+// / -3,-1 \_____/ -1,-2 \_____/  1,-3 \
+// \       /     \ CENTR /     \       /
+//  \_____/ -2,-1 \_____/  0,-2 \_____/
+//  /     \       /     \       /     \
+// / -3,0  \_____/ -1,-1 \_____/  1,-2 \
+// \       /     \       /     \       /
+//  \_____/ -2,0  \_____/  0,-1 \_____/
+//        \       /     \       /
+//         \_____/ -1,0  \_____/
+//               \       /
+//                \_____/
+func TestHexRange(t *testing.T) {
 
+
+	var testCases = []struct {
+		radius                   int
+		expectedNumberOfHexagons int
+	} {
+		{ 0, 1},
+		{ 1, 7},
+		{ 2, 19},
+	}
+
+	for _,tt := range testCases {
+
+		actual := HexRange(NewHex(1,-2),tt.radius)
+
+		if(len(actual) != tt.expectedNumberOfHexagons) {
+			t.Error("Expected:",tt.expectedNumberOfHexagons,"got:", len(actual))
+		}
+	}
+}
+
+//    _ _           _ _           _ _
+//  /     \       /     \       /     \
+// /  0 0  \ _ _ /  2-1  \ _ _ /  4-2  \ _ _
+// \       /     \   X   /     \   X   /     \
+//  \ _ _ /  1 0  \ _ _ /  3-1  \ _ _ /  5-2  \
+//  /     \       /# # #\   X   /     \   X   /
+// /  0 1  \ _ _ /# 2 0 #\ _ _ /  4-1  \ _ _ /
+// \       /     \#     #/# # #\   X   /     \
+//  \ _ _ /  1 1  \#_#_#/# 3 0 #\ _ _ /  5-1  \
+//  /     \  |P|  /     \#  X  #/     \   X   /
+// /  0 2  \ _ _ /  2 1  \#_#_#/  4 0  \ _ _ /
+// \       /     \       /     \   X   /     \
+//  \ _ _ /  1 2  \ _ _ /  3 1  \ _ _ /  5 0  \
+//  /     \       /     \       /     \       /
+// /  0 3  \ _ _ /  2 2  \ _ _ /  4 1  \ _ _ /
+// \       /     \       /     \       /     \
+//  \ _ _ /  1 3  \ _ _ /  3 2  \ _ _ /  5 1  \
+//        \       /     \       /     \       /
+//         \ _ _ /       \ _ _ /       \ _ _ /
+//
+// The FOV measured from the central hex at 1,1, assuming blocking hexagons at 2,0 and 3,0.
+// The hexagons marked with an X are non-visible. The remaining 16 are visible.
+func TestHexFieldOfView(t *testing.T) {
+
+	universe := []hex {
+		NewHex(0,0),
+		NewHex(0,1),
+		NewHex(0,2),
+		NewHex(0,3),
+		NewHex(1,0),
+		NewHex(1,1),
+		NewHex(1,2),
+		NewHex(1,3),
+		NewHex(2,-1),
+		NewHex(2,0),
+		NewHex(2,1),
+		NewHex(2,2),
+		NewHex(3,-1),
+		NewHex(3,0),
+		NewHex(3,1),
+		NewHex(3,2),
+		NewHex(4,-2),
+		NewHex(4,-1),
+		NewHex(4,0),
+		NewHex(4,1),
+		NewHex(5,-2),
+		NewHex(5,-1),
+		NewHex(5,0),
+		NewHex(5,1),
+	}
+
+	losBlockers := []hex { NewHex(2,0),NewHex(3,0)}
+
+	actual := HexFieldOfView(NewHex(1,1), universe, losBlockers)
+
+	if len(actual) != 16 {
+		t.Error("Expected: 16 got:", len(actual))
+	}
+}
+
+////////////////
+// Benchmarks //
+////////////////
 
 func BenchmarkHexDistance(b *testing.B) {
 
@@ -245,3 +349,31 @@ func BenchmarkHexLineDraw(b *testing.B) {
 	}
 }
 
+func BenchmarkHexRange(b *testing.B) {
+
+	var testCases = []struct {
+		radius int
+	} {
+		{ 0 },
+		{ 10 },
+		{ 100 },
+	}
+
+	for _,bm := range testCases {
+
+		origin := NewHex(0,0)
+
+		b.Run(fmt.Sprint(origin,":",bm.radius), func(b *testing.B) {
+			for i:=0; i < b.N; i++ {
+				HexRange(NewHex(1,-2),bm.radius)
+			}
+		})
+	}
+}
+
+func BenchmarkHexHasLineOfSight(b *testing.B) {
+
+	for i:=0; i < b.N; i++ {
+		HexHasLineOfSight(NewHex(1,1), NewHex(4,-1), []hex { NewHex(2,0),NewHex(3,0)})
+	}
+}

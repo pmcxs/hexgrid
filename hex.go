@@ -76,6 +76,7 @@ func NewFractionalHex(q,r float64) fractionalHex {
 
 }
 
+// Rounds a FractionalHex to a Regular Hex
 func (h fractionalHex) Round() hex {
 
 	roundToInt := func (a float64) int {
@@ -105,15 +106,17 @@ func (h fractionalHex) Round() hex {
 
 }
 
-
+// Adds two hexagons
 func HexAdd(a,b hex) hex {
 	return NewHex(a.q + b.q, a.r + b.r)
 }
 
+// Subtracts two hexagons
 func HexSubtract(a,b hex) hex {
 	return NewHex(a.q - b.q, a.r - b.r)
 }
 
+// Scales an hexagon by a k factor. If factor k is 1 there's no change
 func HexScale(a hex,k int) hex {
 	return NewHex(a.q * k, a.r * k)
 }
@@ -159,4 +162,59 @@ func HexLineDraw(a,b hex) []hex {
 		results = append(results, hexLerp(a_nudge, b_nudge, step * float64(i)).Round());
 	}
 	return results;
+}
+
+// Returns the set of hexagons around a certain center for a given radius
+func HexRange(center hex, radius int) []hex {
+
+	var results = make([]hex,0)
+
+	if radius >= 0 {
+		for dx := -radius; dx <= radius; dx++ {
+
+			for dy := math.Max(float64(-radius), float64(-dx - radius)); dy <= math.Min(float64(radius), float64(-dx + radius)); dy++ {
+				results = append(results, HexAdd(center, NewHex(int(dx), int(dy))))
+			}
+		}
+	}
+
+	return results
+
+}
+
+func HexHasLineOfSight(center hex, target hex, blocking []hex) bool {
+
+	contains := func(s []hex, e hex) bool {
+		for _, a := range s {
+			if a == e {
+				return true
+			}
+		}
+		return false
+	}
+
+	for _,h := range HexLineDraw(center, target) {
+
+		if contains(blocking, h) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func HexFieldOfView(source hex, candidates []hex, blocking []hex) []hex {
+
+	results := make([]hex, 0)
+
+	for _,h := range candidates {
+
+		distance := HexDistance(source, h);
+
+		if len(blocking) == 0 || distance <= 1 || HexHasLineOfSight(source, h, blocking) {
+			results = append(results, h)
+		}
+	}
+
+	return results
 }
