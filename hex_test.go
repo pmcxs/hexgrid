@@ -47,6 +47,29 @@ func TestHexSubtract(t *testing.T) {
 	}
 }
 
+func TestHexScale(t *testing.T) {
+
+	var testCases = []struct {
+		hexA     hex
+		factor	 int
+		expected hex
+	}{
+		{NewHex(1, -3), 2, NewHex(2, -6)},
+		{NewHex(-2, 3), 2, NewHex(-4, 6)},
+	}
+
+	for _,tt := range testCases {
+
+		actual := HexScale(tt.hexA, tt.factor)
+
+		if(actual != tt.expected) {
+			t.Error("Expected:",tt.expected,"got:", actual)
+		}
+	}
+
+}
+
+
 
 //           _ _
 //         /     \
@@ -134,36 +157,6 @@ func TestHexDistance(t *testing.T) {
 }
 
 
-func ExampleHexDistance() {
-	source := NewHex(-3,7)
-	destination := NewHex(0,0)
-
-	distance := HexDistance(source, destination)
-	fmt.Println(distance)
-	// Output: 7
-}
-
-func BenchmarkHexDistance(b *testing.B) {
-
-	var testCases = []struct {
-		destination hex
-	} {
-		{ NewHex(0,0)},
-		{ NewHex(100,100)},
-		{ NewHex(10000,10000)},
-	}
-
-	for _,bm := range testCases {
-
-		origin := NewHex(0,0)
-
-		b.Run(fmt.Sprint(origin,":",bm.destination), func(b *testing.B) {
-			for i:=0; i < b.N; i++ {
-				HexDistance(origin, bm.destination)
-			}
-		})
-	}
-}
 
 //          _____         _____         _____
 //         /     \       /     \       /     \
@@ -188,8 +181,9 @@ func TestHexLineDraw(t *testing.T) {
 		destination hex
 		expected    string	// the expected path serialized to string
 	} {
-		{ NewHex(-3,-1), NewHex(3,-3), "[{-3 -1 4} {-2 -1 3} {-1 -2 3} {0 -2 2} {1 -2 1} {2 -3 1} {3 -3 0}]" },
-		{ NewHex(-2, 0), NewHex(2,-2), "[{-2 0 2} {-1 0 1} {0 -1 1} {1 -1 0} {2 -2 0}]" },
+		{ NewHex(-3,-1), NewHex(3,-3), "[(-3,-1) (-2,-1) (-1,-2) (0,-2) (1,-2) (2,-3) (3,-3)]" },
+		{ NewHex(-2, 0), NewHex(2,-2), "[(-2,0) (-1,0) (0,-1) (1,-1) (2,-2)]" },
+		{ NewHex(1, -1), NewHex(1,-3), "[(1,-1) (1,-2) (1,-3)]" },
 	}
 
 
@@ -200,6 +194,54 @@ func TestHexLineDraw(t *testing.T) {
 		if(actual != tt.expected) {
 			t.Error("Expected:",tt.expected,"got:", actual)
 		}
+	}
+}
+
+
+// Benchmarks
+
+
+func BenchmarkHexDistance(b *testing.B) {
+
+	var testCases = []struct {
+		destination hex
+	} {
+		{ NewHex(0,0)},
+		{ NewHex(100,100)},
+		{ NewHex(10000,10000)},
+	}
+
+	for _,bm := range testCases {
+
+		origin := NewHex(0,0)
+
+		b.Run(fmt.Sprint(origin,":",bm.destination), func(b *testing.B) {
+			for i:=0; i < b.N; i++ {
+				HexDistance(origin, bm.destination)
+			}
+		})
+	}
+}
+
+func BenchmarkHexLineDraw(b *testing.B) {
+
+	var testCases = []struct {
+		destination hex
+	} {
+		{ NewHex(0,0)},
+		{ NewHex(100,100)},
+		{ NewHex(10000,10000)},
+	}
+
+	for _,bm := range testCases {
+
+		origin := NewHex(0,0)
+
+		b.Run(fmt.Sprint(origin,":",bm.destination), func(b *testing.B) {
+			for i:=0; i < b.N; i++ {
+				HexLineDraw(origin, bm.destination)
+			}
+		})
 	}
 }
 

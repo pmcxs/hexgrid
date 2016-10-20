@@ -2,6 +2,7 @@ package hexgrid
 
 import (
 	"math"
+	"fmt"
 )
 
 type direction int
@@ -15,17 +16,6 @@ const (
 	directionS
 )
 
-type corner int
-
-const (
-	cornerE = iota
-	cornerSE
-	cornerSW
-	cornerW
-	cornerNW
-	cornerNE
-)
-
 var directions = []hex {
 	NewHex(1,0),
 	NewHex(1,-1),
@@ -34,8 +24,6 @@ var directions = []hex {
 	NewHex(-1,+1),
 	NewHex(0,+1),
 }
-
-
 
 // hex describes a regular hexagon with Cube Coordinates (although the S coordinate is computed on the constructor)
 // It's also easy to reference them as axial (trapezoidal coordinates):
@@ -67,6 +55,10 @@ func NewHex(q,r int) hex {
 	h := hex{q:q, r:r, s:-q-r}
 	return h
 
+}
+
+func (h hex) String() string {
+	return fmt.Sprintf("(%d,%d)",h.q,h.r)
 }
 
 // fractionHex provides a more precise representation for hexagons when precision is required.
@@ -122,11 +114,10 @@ func HexSubtract(a,b hex) hex {
 	return NewHex(a.q - b.q, a.r - b.r)
 }
 
-func HexMultiply(a hex,k int) hex {
+func HexScale(a hex,k int) hex {
 	return NewHex(a.q * k, a.r * k)
 }
 
-// The distance between two hexes is the length of the line between them
 func HexLength(hex hex) int {
 	return int((math.Abs(float64(hex.q)) + math.Abs(float64(hex.r)) + math.Abs(float64(hex.s))) / 2.);
 }
@@ -142,6 +133,7 @@ func HexNeighbor(h hex, direction direction) hex {
 	return NewHex(h.q + directionOffset.q, h.r + directionOffset.r)
 }
 
+// Returns the slice of hexagons that exist on a line that goes from hexagon a to hexagon b
 func HexLineDraw(a,b hex) []hex {
 
 	hexLerp := func(a fractionalHex,b fractionalHex,t float64) fractionalHex {
@@ -149,6 +141,12 @@ func HexLineDraw(a,b hex) []hex {
 	}
 
 	N := HexDistance(a, b)
+
+	// Sometimes the hexLerp will output a point that’s on an edge.
+	// On some systems, the rounding code will push that to one side or the other,
+	// somewhat unpredictably and inconsistently.
+	// To make it always push these points in the same direction, add an “epsilon” value to a.
+	// This will “nudge” things in the same direction when it’s on an edge, and leave other points unaffected.
 
 	a_nudge := NewFractionalHex(float64(a.q) + 0.000001, float64(a.r) + 0.000001);
 	b_nudge := NewFractionalHex(float64(b.q) + 0.000001, float64(b.r) + 0.000001);
@@ -161,5 +159,4 @@ func HexLineDraw(a,b hex) []hex {
 		results = append(results, hexLerp(a_nudge, b_nudge, step * float64(i)).Round());
 	}
 	return results;
-
 }

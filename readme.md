@@ -23,22 +23,43 @@ hexagonA := NewHex(1,2) //at axial coordinates Q=1 R=2
 hexagonB := NewHex(2,3) //at axial coordinates Q=2 R=3
 ```
 
-#### Measuring distance between hexagons
+#### Measuring the distance (in hexagons) between two hexagons
 
 ```go
 distance := HexDistance(hexagonA, hexagonB)
+```
+
+#### Getting the set of hexagons on the path between two hexagons
+
+```go
+origin := NewHex(10,20)
+destination := NewHex(30,40)
+path := HexLineDraw(origin, destination)
+```
+
+
+#### Creating a layout
+
+```go
+origin := point {0,0}     // The coordinate that corresponds to the center of hexagon 0,0
+size := point {100, 100}  // The length of an hexagon side => 100
+layout: = layout{size, origin, orientationFlat}
 ```
 
 #### Obtaining the pixel that corresponds to a given hexagon
 
 ```go
 hex := NewHex(1,0)        // We'll be calculating the pixel that corresponds to the center of hex 1,0     
-origin := point {0,0}     // The coordinate that corresponds to the center of hexagon 0,0
-size := point {100, 100}  // The length of an hexagon side => 100
-pixel := HexToPixel(layout{size:size, origin:origin,orientation:orientationFlat},hex)
+pixel := HexToPixel(layout,hex)
 ```
 
 
+#### Obtaining the hexagon that contains the given pixel (and rounding it)
+
+```go
+point := point {10,20}
+hex := PixelToHex(layout, point).Round()
+```
 
 ## Contributing
 

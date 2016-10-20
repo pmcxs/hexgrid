@@ -8,9 +8,9 @@ type point struct {
 }
 
 type layout struct {
-	orientation orientation		//
-	size point 			//
-	origin point			// center point for hexagon 0,0
+	orientation orientation
+	size point   // multiplication factor relative to the canonical hexagon, where the points are on a unit circle
+	origin point // center point for hexagon 0,0
 }
 
 type orientation struct {
@@ -48,16 +48,17 @@ func PixelToHex(l layout, p point) fractionalHex {
 }
 
 
-func HexCornerOffset(l layout, corner int) point {
+func HexCornerOffset(l layout, c int) point {
 
 	M := l.orientation
 	size := l.size
-	angle := 2. * math.Pi * (M.startAngle - float64(corner)) / 6.
+	angle := 2. * math.Pi * (M.startAngle - float64(c)) / 6.
     	return point{ size.x * math.Cos(angle), size.y * math.Sin(angle)}
 }
 
 
-func GetHexagonCorners(l layout, h hex) []point {
+// Gets the corners of the hexagon for the given layout, starting at the E vertex and proceeding in a CCW order
+func HexagonCorners(l layout, h hex) []point {
 
 	corners := make([]point,0)
 	center := HexToPixel(l, h);
