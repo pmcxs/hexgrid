@@ -61,8 +61,6 @@ func TestHexSubtract(t *testing.T) {
 //  \ _ _ / (0,0) \ _ _ /
 //        \       /
 //         \ _ _ /
-
-
 // Tests that the neighbors of a certain hexagon are properly computed for all directions
 func TestHexNeighbor(t *testing.T) {
 
@@ -89,6 +87,8 @@ func TestHexNeighbor(t *testing.T) {
 		}
 	}
 }
+
+// DISTANCE TESTS
 
 
 //           _ _
@@ -162,10 +162,44 @@ func BenchmarkHexDistance(b *testing.B) {
 				HexDistance(origin, bm.destination)
 			}
 		})
+	}
+}
+
+//          _____         _____         _____
+//         /     \       /     \       /     \
+//   _____/ -2,-2 \_____/  0,-3 \_____/  2,-4 \_____
+//  /     \       /     \       /     \       /     \
+// / -3,-1 \_____/ -1,-2 \_____/  1,-3 \_____/  3,-4 \
+// \       /     \       /     \       /     \       /
+//  \_____/ -2,-1 \_____/  0,-2 \_____/  2,-3 \_____/
+//  /     \       /     \       /     \       /     \
+// / -3,0  \_____/ -1,-1 \_____/  1,-2 \_____/  3,-3 \
+// \       /     \       /     \       /     \       /
+//  \_____/ -2,0  \_____/  0,-1 \_____/  2,-2 \_____/
+//  /     \       /     \       /     \       /     \
+// / -3,1  \_____/ -1,0  \_____/  1,-1 \_____/  3,-2 \
+// \       /     \       /     \       /     \       /
+//  \_____/       \_____/       \_____/       \_____/
+func TestHexLineDraw(t *testing.T) {
 
 
+	var testCases = []struct {
+		origin      hex
+		destination hex
+		expected    string	// the expected path serialized to string
+	} {
+		{ NewHex(-3,-1), NewHex(3,-3), "[{-3 -1 4} {-2 -1 3} {-1 -2 3} {0 -2 2} {1 -2 1} {2 -3 1} {3 -3 0}]" },
+		{ NewHex(-2, 0), NewHex(2,-2), "[{-2 0 2} {-1 0 1} {0 -1 1} {1 -1 0} {2 -2 0}]" },
 	}
 
 
+	for _,tt := range testCases {
+
+		actual := fmt.Sprint(HexLineDraw(tt.origin,tt.destination))
+
+		if(actual != tt.expected) {
+			t.Error("Expected:",tt.expected,"got:", actual)
+		}
+	}
 }
 

@@ -77,6 +77,42 @@ type fractionalHex struct {
 	s float64
 }
 
+func NewFractionalHex(q,r float64) fractionalHex {
+
+	h := fractionalHex{q:q, r:r, s:-q-r}
+	return h
+
+}
+
+func (h fractionalHex) Round() hex {
+
+	roundToInt := func (a float64) int {
+		if a < 0 {
+			return int(a - 0.5)
+		}
+		return int(a + 0.5)
+	}
+
+	q := roundToInt(h.q)
+	r := roundToInt(h.r)
+	s := roundToInt(h.s)
+
+
+	q_diff := math.Abs(float64(q) - h.q)
+	r_diff := math.Abs(float64(r) - h.r)
+	s_diff := math.Abs(float64(s) - h.s)
+
+	if  q_diff > r_diff && q_diff > s_diff {
+		q = -r - s
+	} else if (r_diff > s_diff) {
+		r = -q - s;
+	} else {
+		s = -q - r;
+	}
+	return hex{q, r, s};
+
+}
+
 
 func HexAdd(a,b hex) hex {
 	return NewHex(a.q + b.q, a.r + b.r)
@@ -104,4 +140,26 @@ func HexDistance(a,b hex) int {
 func HexNeighbor(h hex, direction direction) hex {
 	directionOffset := directions[direction]
 	return NewHex(h.q + directionOffset.q, h.r + directionOffset.r)
+}
+
+func HexLineDraw(a,b hex) []hex {
+
+	hexLerp := func(a fractionalHex,b fractionalHex,t float64) fractionalHex {
+		return NewFractionalHex(a.q * (1 - t) + b.q * t, a.r * (1 - t) + b.r * t);
+	}
+
+	N := HexDistance(a, b)
+
+	a_nudge := NewFractionalHex(float64(a.q) + 0.000001, float64(a.r) + 0.000001);
+	b_nudge := NewFractionalHex(float64(b.q) + 0.000001, float64(b.r) + 0.000001);
+
+
+	results := make([]hex, 0);
+	step := 1. / math.Max(float64(N), 1);
+
+	for i := 0; i <= N; i++ {
+		results = append(results, hexLerp(a_nudge, b_nudge, step * float64(i)).Round());
+	}
+	return results;
+
 }
