@@ -184,7 +184,7 @@ func HexRange(center hex, radius int) []hex {
 
 
 // Returns the set of hexagons that form a rectangle with the specified width and height
-func HexRectangle(width,height int) []hex {
+func HexRectangleGrid(width,height int) []hex {
 
 	results := make([]hex, 0)
 

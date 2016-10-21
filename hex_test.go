@@ -241,12 +241,26 @@ func TestHexRange(t *testing.T) {
 }
 
 
+//    _ _           _ _
+//  /     \       /     \
+// /( 0,0) \ _ _ /(2,-1) \
+// \       /     \       /
+//  \ _ _ / (1,0) \ _ _ /
+//  /     \       /     \
+// / (0,1) \ _ _ / (2,0) \
+// \       /     \       /
+//  \ _ _ / (1,1) \ _ _ /
+//        \       /
+//         \ _ _ /
 func TestHexRectangle(t *testing.T) {
 
-	t.Skip()
-	fmt.Print(HexRectangle(3,2))
+	hexgrid := HexRectangleGrid(3,2)
 
+	if len(hexgrid) != 6 {
+		t.Error("Expected: 6 got:",len(hexgrid))
+	}
 
+	
 }
 
 //    _ _           _ _           _ _
