@@ -29,12 +29,12 @@ hexagonB := NewHex(2,3) //at axial coordinates Q=2 R=3
 distance := HexDistance(hexagonA, hexagonB)
 ```
 
-#### Getting the set of hexagons on the path between two hexagons
+#### Getting the array of hexagons on the path between two hexagons
 
 ```go
 origin := NewHex(10,20)
 destination := NewHex(30,40)
-path := HexLineDraw(origin, destination)
+path := HexLineDraw(origin, destination) 
 ```
 
 
@@ -49,8 +49,8 @@ layout: = layout{size, origin, orientationFlat}
 #### Obtaining the pixel that corresponds to a given hexagon
 
 ```go
-hex := NewHex(1,0)        // We'll be calculating the pixel that corresponds to the center of hex 1,0     
-pixel := HexToPixel(layout,hex)
+hex := NewHex(1,0)             
+pixel := HexToPixel(layout,hex)  // Pixel that corresponds to the center of hex 1,0 (in the given layout)
 ```
 
 

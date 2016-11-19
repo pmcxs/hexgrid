@@ -201,7 +201,7 @@ func HexRectangleGrid(width,height int) []hex {
 }
 
 
-
+// Determines if a given hexagon is visible from another hexagon, taking into consideration a set of blocking hexagons
 func HexHasLineOfSight(center hex, target hex, blocking []hex) bool {
 
 	contains := func(s []hex, e hex) bool {
@@ -223,6 +223,7 @@ func HexHasLineOfSight(center hex, target hex, blocking []hex) bool {
 	return true
 }
 
+// Returns the list of hexagons that are visible from a given hexagon
 func HexFieldOfView(source hex, candidates []hex, blocking []hex) []hex {
 
 	results := make([]hex, 0)

@@ -197,6 +197,7 @@ func TestHexLineDraw(t *testing.T) {
 }
 
 
+// Tests that the range includes the correct number of hexagons with a certain radius from the center
 //                 _____
 //                /     \
 //          _____/ -1,-2 \_____
