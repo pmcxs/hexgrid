@@ -2,8 +2,8 @@ package hexgrid
 
 import (
 	"fmt"
-	"testing"
 	"math"
+	"testing"
 )
 
 //        100(size) 50  50
@@ -26,19 +26,17 @@ import (
 //                   *         *
 //                    *********
 //
-var defaultLayout = layout{size:point {100, 100}, origin:point {0,0},orientation:orientationFlat}
+var defaultLayout = layout{size: point{100, 100}, origin: point{0, 0}, orientation: orientationFlat}
 
 // utility functions
 func round(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
 
-
 func toFixed(num float64, precision int) float64 {
 	output := math.Pow(10, float64(precision))
-	return float64(round(num * output)) / output
+	return float64(round(num*output)) / output
 }
-
 
 func TestHexToPixel(t *testing.T) {
 
@@ -52,14 +50,14 @@ func TestHexToPixel(t *testing.T) {
 		{NewHex(2, -1), "300.0;0.0"},
 	}
 
-	for _,tt := range testCases {
+	for _, tt := range testCases {
 
-		pixel := HexToPixel(defaultLayout,tt.hexA)
+		pixel := HexToPixel(defaultLayout, tt.hexA)
 
-		actual := fmt.Sprintf("%.1f;%.1f", pixel.x, pixel.y )
+		actual := fmt.Sprintf("%.1f;%.1f", pixel.x, pixel.y)
 
-		if(actual != tt.expected) {
-			t.Error("Expected:",tt.expected,"got:", actual)
+		if actual != tt.expected {
+			t.Error("Expected:", tt.expected, "got:", actual)
 		}
 	}
 }
@@ -70,17 +68,17 @@ func TestPixelToHex(t *testing.T) {
 		point    point
 		expected hex
 	}{
-		{point{0, 0}, NewHex(0,0)},
-		{point{150, 87}, NewHex(1,0)},
-		{point{300, 10}, NewHex(2,-1)},
+		{point{0, 0}, NewHex(0, 0)},
+		{point{150, 87}, NewHex(1, 0)},
+		{point{300, 10}, NewHex(2, -1)},
 	}
 
-	for _,tt := range testCases {
+	for _, tt := range testCases {
 
-		actual := PixelToHex(defaultLayout,tt.point).Round()
+		actual := PixelToHex(defaultLayout, tt.point).Round()
 
-		if(actual != tt.expected) {
-			t.Error("Expected:",tt.expected,"got:", actual)
+		if actual != tt.expected {
+			t.Error("Expected:", tt.expected, "got:", actual)
 		}
 	}
 }
@@ -99,26 +97,26 @@ func TestPixelToHex(t *testing.T) {
 //  (-50;86.6) +*******+ (50;86.6)
 func TestHexagonCorners(t *testing.T) {
 
-	corners := HexagonCorners(defaultLayout, NewHex(0,0))
+	corners := HexagonCorners(defaultLayout, NewHex(0, 0))
 
 	if len(corners) != 6 {
-		t.Error("Invalid length:",len(corners))
+		t.Error("Invalid length:", len(corners))
 	}
 
 	// The expected corners of the hexagon, starting at the East vertex and proceeding in CCW order
 	testCase := []struct {
 		roundedX float64
 		roundedY float64
-	} {
-		{ 100, 0 },
-		{ 50, -86.6},
-		{ -50, -86.6},
-		{ -100, 0},
-		{ -50, 86.6},
-		{ 50, 86.6},
+	}{
+		{100, 0},
+		{50, -86.6},
+		{-50, -86.6},
+		{-100, 0},
+		{-50, 86.6},
+		{50, 86.6},
 	}
 
-	for i:=0; i < len(corners); i++ {
+	for i := 0; i < len(corners); i++ {
 
 		actualX := toFixed(corners[i].x, 1)
 		actualY := toFixed(corners[i].y, 1)
@@ -126,10 +124,8 @@ func TestHexagonCorners(t *testing.T) {
 		expectedY := testCase[i].roundedY
 
 		if actualX != expectedX || actualY != expectedY {
-			t.Errorf("Expected: (%.1f,%.1f) got: (%.1f,%.1f)",expectedX,expectedY,actualX,actualY)
+			t.Errorf("Expected: (%.1f,%.1f) got: (%.1f,%.1f)", expectedX, expectedY, actualX, actualY)
 		}
 	}
-
-
 
 }
